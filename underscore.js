@@ -882,35 +882,31 @@
     return obj;
   };
 
-  // Return a copy of the object only containing the whitelisted properties.
-  _.pick = function(obj, iterator, context) {
-    var result = {};
-    if (_.isFunction(iterator)) {
+  // internal wrapper around a key picker
+  var createPicker = function(negateResult) {
+    return function(obj, iterator, context) {
+      var result = {}, state;
+      if (_.isFunction(iterator)) {
+        iterator = createCallback(iterator, context);
+      } else {
+        var keys = _.invert(concat.apply([], slice.call(arguments, 1)));
+        iterator = function(value, key) {
+          return key in keys;
+        };
+      }
       for (var key in obj) {
-        var value = obj[key];
-        if (iterator.call(context, value, key, obj)) result[key] = value;
+        state = iterator(obj[key], key, obj);
+        if (negateResult ? !state : state) result[key] = obj[key]; 
       }
-    } else {
-      var keys = concat.apply([], slice.call(arguments, 1));
-      for (var i = 0, length = keys.length; i < length; i++) {
-        var key = keys[i];
-        if (key in obj) result[key] = obj[key];
-      }
-    }
-    return result;
+      return result;
+    };
   };
 
+  // Return a copy of the object only containing the whitelisted properties.
+  _.pick = createPicker(false);
+
    // Return a copy of the object without the blacklisted properties.
-  _.omit = function(obj, iterator, context) {
-    var keys;
-    if (_.isFunction(iterator)) {
-      iterator = _.negate(iterator);
-    } else {
-      keys = _.map(concat.apply([], slice.call(arguments, 1)), String);
-      iterator = function(value, key) { return !_.contains(keys, key); };
-    }
-    return _.pick(obj, iterator, context);
-  };
+  _.omit = createPicker(true);
 
   // Fill in a given object with default properties.
   _.defaults = function(obj) {
