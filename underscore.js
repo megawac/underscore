@@ -113,12 +113,19 @@
 
   // Return the results of applying the iterator to each element.
   _.map = _.collect = function(obj, iterator, context) {
-    var results = [];
-    if (obj == null) return results;
+    if (obj == null) return [];
     iterator = lookupIterator(iterator, context);
-    _.each(obj, function(value, index, list) {
-      results.push(iterator(value, index, list));
-    });
+    var length = obj.length;
+    var index = 0, currentKey, keys;
+    if (length !== +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+    var results = Array(length);
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      results[index] = iterator(obj[currentKey], currentKey, obj);
+    }
     return results;
   };
 
@@ -127,17 +134,24 @@
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`.
   _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
-    var initial = arguments.length > 2;
     if (obj == null) obj = [];
     iterator = createCallback(iterator, context, 4);
-    _.each(obj, function(value, index, list) {
+    var initial = arguments.length > 2;
+    var length = obj.length;
+    var index = 0, currentKey, keys;
+    if (length !== +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
       if (!initial) {
-        memo = value;
+        memo = obj[currentKey];
         initial = true;
       } else {
-        memo = iterator(memo, value, index, list);
+        memo = iterator(memo, obj[currentKey], currentKey, obj);
       }
-    });
+    }
     if (!initial) throw TypeError(reduceError);
     return memo;
   };
