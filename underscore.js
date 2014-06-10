@@ -195,12 +195,19 @@
   // Return all the elements that pass a truth test.
   // Aliased as `select`.
   _.filter = _.select = function(obj, predicate, context) {
-    var results = [];
-    if (obj == null) return results;
+    if (obj == null) return [];
     predicate = lookupIterator(predicate, context);
-    _.each(obj, function(value, index, list) {
-      if (predicate(value, index, list)) results.push(value);
-    });
+    var results = [];
+    var length = obj.length;
+    var index = 0, currentKey, keys;
+    if (length !== +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if(predicate(obj[currentKey], currentKey, obj)) results.push(obj[currentKey]);
+    }
     return results;
   };
 
