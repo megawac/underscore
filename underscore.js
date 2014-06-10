@@ -232,14 +232,19 @@
   // Determine if at least one element in the object matches a truth test.
   // Aliased as `any`.
   _.some = _.any = function(obj, predicate, context) {
-    var result = false;
-    if (obj == null) return result;
+    if (obj == null) return false;
     predicate = lookupIterator(predicate, context);
-    _.each(obj, function(value, index, list) {
-      result = predicate(value, index, list);
-      if (result) return breaker;
-    });
-    return !!result;
+    var length = obj.length;
+    var index = 0, currentKey, keys;
+    if (length !== +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      if(predicate(obj[currentKey], currentKey, obj)) return true;
+    }
+    return false;
   };
 
   // Determine if the array or object contains a given value (using `===`).
