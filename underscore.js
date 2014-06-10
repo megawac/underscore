@@ -259,48 +259,48 @@
 
   // Return the maximum element (or element-based computation).
   _.max = function(obj, iterator, context) {
+    if (iterator) iterator = lookupIterator(iterator, context);
     var result = -Infinity, lastComputed = -Infinity,
-        value, computed;
-    if (!iterator && _.isArray(obj)) {
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value > result) {
-          result = value;
-        }
+        value, computed, currentKey, keys;
+
+    var index = 0, length = obj.length;
+    if (length === +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      value = obj[currentKey];
+      computed = iterator ? iterator(value, currentKey, obj) : value;
+      if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
+        result = value;
+        lastComputed = computed;
       }
-    } else {
-      iterator = lookupIterator(iterator, context);
-      _.each(obj, function(value, index, list) {
-        computed = iterator(value, index, list);
-        if (computed > lastComputed || computed === -Infinity && result === -Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
     }
     return result;
   };
 
   // Return the minimum element (or element-based computation).
   _.min = function(obj, iterator, context) {
+    if (iterator) iterator = lookupIterator(iterator, context);
     var result = Infinity, lastComputed = Infinity,
-        value, computed;
-    if (!iterator && _.isArray(obj)) {
-      for (var i = 0, length = obj.length; i < length; i++) {
-        value = obj[i];
-        if (value < result) {
-          result = value;
-        }
+        value, computed, currentKey, keys;
+
+    var index = 0, length = obj.length;
+    if (length === +length) {
+      keys = _.keys(obj);
+      length = keys.length;
+    }
+
+    for (; index < length; index++) {
+      currentKey = keys ? keys[index] : index;
+      value = obj[currentKey];
+      computed = iterator ? iterator(value, currentKey, obj) : value;
+      if (computed < lastComputed || computed === Infinity && result === Infinity) {
+        result = value;
+        lastComputed = computed;
       }
-    } else {
-      iterator = lookupIterator(iterator, context);
-      _.each(obj, function(value, index, list) {
-        computed = iterator(value, index, list);
-        if (computed < lastComputed || computed === Infinity && result === Infinity) {
-          result = value;
-          lastComputed = computed;
-        }
-      });
     }
     return result;
   };
