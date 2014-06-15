@@ -398,8 +398,13 @@
   // Safely create a real, live array from anything iterable.
   _.toArray = function(obj) {
     if (!obj) return [];
-    if (_.isArray(obj)) return slice.call(obj);
-    if (obj.length === +obj.length) return _.map(obj, _.identity);
+    if (obj.length === +obj.length) {
+      // ie7 has an issue with calling slice on strings
+      if (typeof obj == 'string') return obj.split('');
+      // check obj.item to prevent calling slice on a NodeList
+      if (!obj.item) return slice.call(obj);
+      return _.map(obj, _.identity);
+    }
     return _.values(obj);
   };
 
