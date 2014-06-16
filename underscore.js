@@ -400,10 +400,8 @@
     if (!obj) return [];
     if (obj.length === +obj.length) {
       // ie7 has an issue with calling slice on strings
-      if (typeof obj == 'string') return obj.split('');
-      // check obj.item to prevent calling slice on a NodeList
-      if (!obj.item) return slice.call(obj);
-      return _.map(obj, _.identity);
+      // further, ie<9 produce an error calling slice on a NodeList: check obj.item to avoid.
+      return obj.item || _.isString(obj) ? _.map(obj, _.identity) : slice.call(obj);
     }
     return _.values(obj);
   };
