@@ -506,7 +506,7 @@
     for (var i = 0, length = array.length; i < length; i++) {
       var value = array[i];
       if (iterator) value = iterator(value, i, array);
-      if (isSorted ? !i || seen !== value : !_.contains(seen, value)) {
+      if (isSorted ? !i || seen !== value : _.indexOf(seen, value) == -1) {
         if (isSorted) seen = value;
         else seen.push(value);
         result.push(array[i]);
@@ -529,9 +529,9 @@
     var argsLength = arguments.length;
     for (var i = 0, length = array.length; i < length; i++) {
       var item = array[i];
-      if (_.contains(result, item)) continue;
+      if (_.indexOf(result, item) >= 0) continue;
       for (var j = 1; j < argsLength; j++) {
-        if (!_.contains(arguments[j], item)) break;
+        if (_.indexOf(arguments[j], item) == -1) break;
       }
       if (j === argsLength) result.push(item);
     }
@@ -543,7 +543,7 @@
   _.difference = function(array) {
     var rest = flatten(slice.call(arguments, 1), true, true, []);
     return _.filter(array, function(value){
-      return !_.contains(rest, value);
+      return _.indexOf(rest, value) == -1;
     });
   };
 
@@ -919,7 +919,7 @@
     } else {
       keys = _.map(concat.apply([], slice.call(arguments, 1)), String);
       iterator = function(value, key) {
-        return !_.contains(keys, key);
+        return _.indexOf(keys, key) == -1;
       };
     }
     return _.pick(obj, iterator, context);
