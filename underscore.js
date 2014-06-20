@@ -638,16 +638,20 @@
     if (!_.isFunction(func)) throw TypeError('Bind must be called on a function');
     args = slice.call(arguments, 2);
     bound = function() {
-      if (!(this instanceof bound)) return func.apply(context, args.concat(slice.call(arguments)));
-      Ctor.prototype = func.prototype;
-      var self = new Ctor;
-      Ctor.prototype = null;
+      var isBound = this instanceof bound;
+      var self = context;
+      if (isBound) {
+        Ctor.prototype = func.prototype;
+        self = new Ctor;
+      }
       var result = func.apply(self, args.concat(slice.call(arguments)));
-      if (Object(result) === result) return result;
+      if (!isBound || _.isObject(result)) return result;
       return self;
     };
     return bound;
   };
+
+  delete Function.prototype.bind;
 
   // Partially apply a function by creating a version that has had some of its
   // arguments pre-filled, without changing its dynamic `this` context. _ acts
