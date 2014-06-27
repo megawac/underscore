@@ -115,16 +115,21 @@
    _.map = _.collect = function(obj, iterator, context) {
     if (obj == null) return [];
     iterator = lookupIterator(iterator, context);
-    var length = obj.length,
-        currentKey, keys;
-    if (length !== +length) {
+    var i = 0,
+        length = obj.length,
+        results, currentKey, keys;
+    if (obj.length === +obj.length) {
+      results = Array(length);
+      for (; i < length; i++) {
+        results[i] = iterator(obj[i], i, obj);
+      }
+    } else {
       keys = _.keys(obj);
       length = keys.length;
-    }
-    var results = Array(length);
-    for (var index = 0; index < length; index++) {
-      currentKey = keys ? keys[index] : index;
-      results[index] = iterator(obj[currentKey], currentKey, obj);
+      results = Array(length);
+      for (; i < length; i++) {
+        results[i] = iterator(obj[keys[i]], keys[i], obj);
+      }
     }
     return results;
   };
