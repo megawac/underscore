@@ -140,7 +140,7 @@
       length = keys.length;
     }
     if (arguments.length < 3) {
-      if (!length) throw TypeError(reduceError);
+      // if (!length) throw TypeError(reduceError);
       memo = obj[keys ? keys[index++] : index++];
     }
     for (; index < length; index++) {
