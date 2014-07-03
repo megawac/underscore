@@ -130,11 +130,12 @@
 
   // **Reduce** builds up a single result from a list of values, aka `inject`,
   // or `foldl`.
-  _.reduce = _.foldl = _.inject = function(obj, iterator, memo, context) {
+  _.reduce = _.foldl = _.inject = function(obj, callback, initial, context) {
     if (obj == null) obj = [];
-    iterator = createCallback(iterator, context, 4);
+    var iterator = createCallback(callback, context, 4);
     var index = 0, length = obj.length,
-        currentKey, keys;
+      memo = initial,
+      currentKey, keys;
     if (length !== +length) {
       keys = _.keys(obj);
       length = keys.length;
@@ -151,10 +152,11 @@
   };
 
   // The right-associative version of reduce, also known as `foldr`.
-  _.reduceRight = _.foldr = function(obj, iterator, memo, context) {
+  _.reduceRight = _.foldr = function(obj, callback, initial, context) {
     if (obj == null) obj = [];
-    iterator = createCallback(iterator, context, 4);
+    var iterator = createCallback(callback, context, 4);
     var index = obj.length,
+        memo = initial,
         currentKey, keys;
     if (index !== +index) {
       keys = _.keys(obj);
