@@ -1223,25 +1223,23 @@
   };
   var unescapeMap = _.invert(escapeMap);
 
-  // Regexes containing the keys and values listed immediately above.
-  var escapeRegex =   '[' + _.keys(escapeMap).join('') + ']';
-  var unescapeRegex = '(' + _.keys(unescapeMap).join('|') + ')';
-
   // Functions for escaping and unescaping strings to/from HTML interpolation.
-  var createEscaper = function(map, regexSource) {
+  var createEscaper = function(map) {
     var escaper = function(match) {
       return map[match];
     };
-    var testRegexp = RegExp(regexSource);
-    var replaceRegexp = RegExp(regexSource, 'g');
+    // Regexes for identifying a key that needs to be escaped
+    var source = '(' + _.keys(map).join('|') + ')';
+    var testRegexp = RegExp(source);
+    var replaceRegexp = RegExp(source, 'g');
     return function(string) {
       if (string == null) return '';
       string = '' + string;
       return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
     };
   };
-  _.escape = createEscaper(escapeMap, escapeRegex);
-  _.unescape = createEscaper(unescapeMap, unescapeRegex);
+  _.escape = createEscaper(escapeMap);
+  _.unescape = createEscaper(unescapeMap);
 
 
   // If the value of the named `property` is a function then invoke it with the
