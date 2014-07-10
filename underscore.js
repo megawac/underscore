@@ -1224,16 +1224,20 @@
   var unescapeMap = _.invert(escapeMap);
 
   // Regexes containing the keys and values listed immediately above.
-  var escapeRegex =   RegExp('[' + _.keys(escapeMap).join('') + ']', 'g');
-  var unescapeRegex = RegExp('(' + _.keys(unescapeMap).join('|') + ')', 'g');
+  var escapeRegex =   '[' + _.keys(escapeMap).join('') + ']';
+  var unescapeRegex = '(' + _.keys(unescapeMap).join('|') + ')';
 
   // Functions for escaping and unescaping strings to/from HTML interpolation.
-  var createEscaper = function(map, regex) {
+  var createEscaper = function(map, regexSource) {
+    var escaper = function(match) {
+      return map[match];
+    };
+    var testRegexp = RegExp(regexSource);
+    var replaceRegexp = RegExp(regexSource, 'g');
     return function(string) {
       if (string == null) return '';
-      return ('' + string).replace(regex, function(match) {
-        return map[match];
-      });
+      string = '' + string;
+      return testRegexp.test(string) ? string.replace(replaceRegexp, escaper) : string;
     };
   };
   _.escape = createEscaper(escapeMap, escapeRegex);
