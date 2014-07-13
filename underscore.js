@@ -506,6 +506,16 @@
     return _.difference(array, slice.call(arguments, 1));
   };
 
+  var sortedUnique = function(array) {
+    var result = [];
+    for (var i = 0, length = array.length; i < length; i++) {
+      if (i + 1 > length || array[i] !== array[i + 1]) {
+        result.push(array[i]);
+      }
+    }
+    return result;
+  };
+
   // Produce a duplicate-free version of the array. If the array has already
   // been sorted, you have the option of using a faster algorithm.
   // Aliased as `unique`.
@@ -514,7 +524,8 @@
     if (_.isFunction(isSorted)) {
       context = iterator;
       iterator = isSorted;
-      isSorted = false;
+    } else if (isSorted) {
+      return sortedUnique(array);
     }
     if (iterator) iterator = lookupIterator(iterator, context);
     var result = [];
@@ -522,11 +533,7 @@
     outer:
     for (var i = 0, length = array.length; i < length; i++) {
       var value = array[i];
-      if (isSorted) {
-        if (!i || seen !== value) result.push(value);
-        seen = value;
-      }
-      else if (iterator) {
+      if (iterator) {
         var computed = iterator(value, i, array);
         if (_.indexOf(seen, computed) < 0) {
           seen.push(computed);
@@ -534,8 +541,9 @@
         }
       }
       else {
-        for (var j = 0, jlen = result.length; j < jlen; j++) {
-          if (result[j] === value) continue outer;
+        var ridx = result.length;
+        while (ridx--) {
+          if (result[ridx] === value) continue outer;
         }
         result.push(value);
       }
