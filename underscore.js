@@ -519,6 +519,7 @@
     if (iterator) iterator = lookupIterator(iterator, context);
     var result = [];
     var seen = [];
+    outer:
     for (var i = 0, length = array.length; i < length; i++) {
       var value = array[i];
       if (isSorted) {
@@ -531,7 +532,11 @@
           seen.push(computed);
           result.push(value);
         }
-      } else if (_.indexOf(result, value) < 0) {
+      }
+      else {
+        for (var j = 0, jlen = result.length; j < jlen; j++) {
+          if (result[j] === value) continue outer;
+        }
         result.push(value);
       }
     }
