@@ -527,7 +527,7 @@
       }
       else if (iterator) {
         var computed = iterator(value, i, array);
-        if (!_.contains(seen, computed)) {
+        if (_.indexOf(seen, computed) < 0) {
           seen.push(computed);
           result.push(value);
         }
