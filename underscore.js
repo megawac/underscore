@@ -550,12 +550,10 @@
     var result = [];
     var argsLength = arguments.length;
     for (var i = 0, length = array.length; i < length; i++) {
-      var item = array[i];
-      if (_.contains(result, item)) continue;
-      for (var j = 1; j < argsLength; j++) {
-        if (!_.contains(arguments[j], item)) break;
-      }
-      if (j === argsLength) result.push(item);
+      var item = array[i], idx = argsLength;
+      if (_.indexOf(result, item) >= 0) continue;
+      while (idx-- > 1 && _.contains(arguments[idx], item)) {}
+      if (idx === 0) result.push(item);
     }
     return result;
   };
