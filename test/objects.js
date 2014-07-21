@@ -13,6 +13,21 @@
     deepEqual(_.keys(1), []);
     deepEqual(_.keys('a'), []);
     deepEqual(_.keys(true), []);
+
+    // keys that may be missed if the implementation isn't careful
+    var trouble = {
+      'constructor': Object,
+      'valueOf': _.noop,
+      'hasOwnProperty': null,
+      'toString': 5,
+      'toLocaleString': undefined,
+      '__defineGetter__': Boolean,
+      '__defineSetter__': {},
+      '__lookupSetter__': false,
+      '__lookupGetter__': []
+    };
+    var troubleKeys = ['constructor', 'valueOf', 'hasOwnProperty', 'toString', 'toLocaleString', '__defineGetter__', '__defineSetter__', '__lookupSetter__', '__lookupGetter__'].sort();
+    deepEqual(_.keys(trouble).sort(), troubleKeys, 'matches non-enumerable properties');
   });
 
   test('values', function() {
