@@ -32,6 +32,7 @@
     nativeKeys         = Object.keys,
     nativeBind         = FuncProto.bind;
 
+
   // Create a safe reference to the Underscore object for use below.
   var _ = function(obj) {
     if (obj instanceof _) return obj;
@@ -49,6 +50,20 @@
     exports._ = _;
   } else {
     root._ = _;
+  }
+  
+  var InternalSet = root.Set;
+  // Not even close to a Set shim
+  if (typeof InternalSet != 'function') {
+    InternalSet = function FakeSet() {
+      this.data = [];
+    };
+    InternalSet.prototype.add = function(x) {
+      this.data.push(x);
+    };
+    InternalSet.prototype.has = function(x) {
+      return _.indexOf(this.data, x) >= 0;
+    };
   }
 
   // Current version.
@@ -505,19 +520,15 @@
     }
     if (iteratee != null) iteratee = _.iteratee(iteratee, context);
     var result = [];
-    var seen = [];
+    var seen = isSorted ? null : new InternalSet();
     for (var i = 0, length = array.length; i < length; i++) {
       var value = array[i],
           computed = iteratee ? iteratee(value, i, array) : value;
       if (isSorted) {
         if (!i || seen !== computed) result.push(value);
         seen = computed;
-      } else if (iteratee) {
-        if (!_.contains(seen, computed)) {
-          seen.push(computed);
-          result.push(value);
-        }
-      } else if (!_.contains(result, value)) {
+      } else if (!seen.has(computed)) {
+        seen.add(computed);
         result.push(value);
       }
     }
