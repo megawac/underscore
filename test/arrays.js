@@ -255,7 +255,7 @@
     var result = (function(){ return _.indexOf(arguments, 2); }(1, 2, 3));
     equal(result, 1, 'works on an arguments object');
 
-    _.each([null, void 0, [], false], function(val) {
+    _.each([null, void 0, [], false, 10], function(val) {
       var msg = 'Handles: ' + (_.isArray(val) ? '[]' : val);
       equal(_.indexOf(val, 2), -1, msg);
       equal(_.indexOf(val, 2, -1), -1, msg);
