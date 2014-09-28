@@ -590,20 +590,31 @@
     return result;
   };
 
+  function indexOf(array, val, index) {
+    for (var i = index, length = array.length; i < length; i++) {
+      if (array[i] === val) return i;
+    }
+    return -1;
+  }
+
+  function sortedIndexOf(array, item) {
+    var idx = _.sortedIndex(array, item);
+    return array[idx] === item ? idx : -1;
+  }
+
   // Return the position of the first occurrence of an item in an array,
   // or -1 if the item is not included in the array.
   // If the array is large and already in sort order, pass `true`
   // for **isSorted** to use binary search.
   _.indexOf = function(array, item, isSorted) {
     var i = 0, length = array && array.length;
+    if (!length) return -1;
     if (typeof isSorted == 'number') {
       i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted;
     } else if (isSorted) {
-      i = _.sortedIndex(array, item);
-      return array[i] === item ? i : -1;
+      return sortedIndexOf(array, item);
     }
-    for (; i < length; i++) if (array[i] === item) return i;
-    return -1;
+    return indexOf(array, item, i);
   };
 
   _.lastIndexOf = function(array, item, from) {
