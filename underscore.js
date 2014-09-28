@@ -597,6 +597,11 @@
     return -1;
   }
 
+  function sortedIndexOf(array, item) {
+    var idx = _.sortedIndexOf(array, item);
+    return array[idx] === item ? idx : -1;
+  }
+
   // Return the position of the first occurrence of an item in an array,
   // or -1 if the item is not included in the array.
   // If the array is large and already in sort order, pass `true`
@@ -607,8 +612,7 @@
     if (typeof isSorted == 'number') {
       i = isSorted < 0 ? Math.max(0, length + isSorted) : isSorted;
     } else if (isSorted) {
-      i = _.sortedIndex(array, item);
-      return array[i] === item ? i : -1;
+      return sortedIndexOf(array, item);
     }
     return indexOf(array, item, i);
   };
