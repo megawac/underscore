@@ -669,7 +669,10 @@
     var low = 0, high = array.length;
     while (low < high) {
       var mid = Math.floor((low + high) / 2);
-      if (_.comparator(iteratee(array[mid]), value) < 0) low = mid + 1; else high = mid;
+      var computed = iteratee(array[mid]);
+      // Optimized for the computed value being greater than the current closest
+      if (computed > value || _.comparator(computed, value) >= 0) high = mid;
+      else low = mid + 1;
     }
     return low;
   };
