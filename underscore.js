@@ -741,7 +741,7 @@
     var boundArgs = slice.call(arguments, 1);
     return function bound() {
       var position = 0, length = boundArgs.length;
-      var args = Array(length);
+      var args = [];
       for (var i = 0; i < length; i++) {
         args[i] = boundArgs[i] === _ ? arguments[position++] : boundArgs[i];
       }
