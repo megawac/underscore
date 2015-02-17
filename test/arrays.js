@@ -141,7 +141,7 @@
     var sorted = _.sortBy([undefined, 1, undefined, 2]);
     equal(_.sortedIndex(sorted, undefined, _.identity), 2);
 
-    var edgeCaseNumbers = [-Infinity, -Infinity, 0, 345345345234, Infinity, Infinity, undefined, undefined, NaN];
+    var edgeCaseNumbers = _.sortBy([-Infinity, -Infinity, 0, 345345345234, Infinity, Infinity, NaN, undefined, undefined]);
 
     var indexForUndefined = _.sortedIndex(edgeCaseNumbers, undefined);
     equal(indexForUndefined, 6, 'undefined should be inserted at index 6');
@@ -156,7 +156,7 @@
     equal(indexForZero, 2, '0 should be inserted at index 2');
 
     var indexForNaN = _.sortedIndex(edgeCaseNumbers, NaN);
-    equal(indexForNaN, 8, 'NaN should be inserted at index 8');
+    equal(indexForNaN, 6, 'NaN should be inserted at index 6');
 
     var numbers = [10, 20, 30, 40, 50];
 
