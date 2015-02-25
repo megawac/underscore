@@ -96,8 +96,8 @@
 
   // Similar to ES6's rest params (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
   // This accumulates the arguments passed into an array, after a given index.
-  _.restParams = function rest(func) {
-    var startIndex = function.length - 1;
+  _.restParams = function(func) {
+    var startIndex = func.length - 1;
     return function() {
       var length = arguments.length > startIndex ? arguments.length - startIndex : 0;
       var rest = Array(length);
