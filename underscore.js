@@ -96,21 +96,26 @@
 
   // Similar to ES6's rest params (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
   // This accumulates the arguments passed into an array, after a given index.
-  _.restParams = function rest(func, startIndex) {
-    startIndex = startIndex != null ? +startIndex : 1;
+  _.restParams = function rest(func) {
+    var startIndex = function.length - 1;
     return function() {
-      var len = arguments.length;
-      var args = Array(len > startIndex ? len - startIndex : 0);
-      for (var index = startIndex; index < len; index++) {
-        args[index - startIndex] = arguments[index];
+      var length = arguments.length > startIndex ? arguments.length - startIndex : 0;
+      var rest = Array(length);
+      for (var index = 0; index < length; index++) {
+        rest[index] = arguments[index + startIndex];
       }
       switch (startIndex) {
-        case 0: return func.call(this, args);
-        case 1: return func.call(this, arguments[0], args);
-        case 2: return func.call(this, arguments[0], arguments[1], args);
-        case 3: return func.call(this, arguments[0], arguments[1], arguments[2], args);
+        case 0: return func.call(this, rest);
+        case 1: return func.call(this, arguments[0], rest);
+        case 2: return func.call(this, arguments[0], arguments[1], rest);
+        case 3: return func.call(this, arguments[0], arguments[1], arguments[2], rest);
       }
-      return func.apply(this, _.take(arguments, startIndex).concat([args]));
+      var args = Array(startIndex + 1);
+      for (index = 0; index < startIndex; index++) {
+        var args[index] = arguments[index];
+      }
+      args[index] = rest;
+      return func.apply(this, args);
     };
   };
 
@@ -286,7 +291,7 @@
       var func = isFunc ? method : value[method];
       return func == null ? func : func.apply(value, args);
     });
-  }, 2);
+  });
 
   // Convenience version of a common use case of `map`: fetching a property.
   _.pluck = function(obj, key) {
@@ -720,15 +725,14 @@
   // Create a function bound to a given object (assigning `this`, and arguments,
   // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
   // available.
-  _.bind = function(func, context) {
+  _.bind = _.restParams(function(func, context, args) {
     if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
-    var args = slice.call(arguments, 2);
     var bound = _.restParams(function(callArgs) {
       return executeBound(func, bound, context, this, args.concat(callArgs));
-    }, 0);
+    });
     return bound;
-  };
+  });
 
   // Partially apply a function by creating a version that has had some of its
   // arguments pre-filled, without changing its dynamic `this` context. _ acts
@@ -774,7 +778,7 @@
     return setTimeout(function(){
       return func.apply(null, args);
     }, wait);
-  }, 2);
+  });
 
   // Defers a function, scheduling it to run after the current call stack has
   // cleared.
