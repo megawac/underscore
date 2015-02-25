@@ -96,8 +96,8 @@
 
   // Similar to ES6's rest params (http://ariya.ofilabs.com/2013/03/es6-and-rest-parameter.html)
   // This accumulates the arguments passed into an array, after a given index.
-  _.restParams = function(func) {
-    var startIndex = func.length - 1;
+  _.restParams = function(func, startIndex) {
+    var startIndex = startIndex == null ? func.length - 1 : +startIndex;
     return function() {
       var length = arguments.length > startIndex ? arguments.length - startIndex : 0;
       var rest = Array(length);
@@ -726,7 +726,7 @@
   // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
   // available.
   _.bind = _.restParams(function(func, context, args) {
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply.call(func, context, args);
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
     if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     var bound = _.restParams(function(callArgs) {
       return executeBound(func, bound, context, this, args.concat(callArgs));
