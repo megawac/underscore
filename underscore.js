@@ -726,7 +726,7 @@
   // optionally). Delegates to **ECMAScript 5**'s native `Function.bind` if
   // available.
   _.bind = _.restParams(function(func, context, args) {
-    if (nativeBind && func.bind === nativeBind) return nativeBind.apply(func, slice.call(arguments, 1));
+    if (nativeBind && func.bind === nativeBind) return nativeBind.apply.call(func, context, args);
     if (!_.isFunction(func)) throw new TypeError('Bind must be called on a function');
     var bound = _.restParams(function(callArgs) {
       return executeBound(func, bound, context, this, args.concat(callArgs));
