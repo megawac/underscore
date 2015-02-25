@@ -112,7 +112,7 @@
       }
       var args = Array(startIndex + 1);
       for (index = 0; index < startIndex; index++) {
-        var args[index] = arguments[index];
+        args[index] = arguments[index];
       }
       args[index] = rest;
       return func.apply(this, args);
